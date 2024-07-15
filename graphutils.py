@@ -2,6 +2,7 @@ import json
 import gzip
 import networkx as nx
 import pandas as pd
+import matplotlib.pyplot as plt
 
 def extract_id(txt):
     #organiza a nomeclatura
@@ -67,6 +68,7 @@ def get_grafo_parametros(json_data,df,parametro_primeiro,primeiro_valor,parametr
         grafo = get_grafo(json_data,series_nos)
     return grafo
 
+
 def get_artistas_df():
     #pega a tabela de disruptividade
     disruptive = get_df('disrupt','csv')
@@ -77,4 +79,31 @@ def get_artistas_df():
     #tabela cruzada dos dois
     disruption_genero = artistas.get(['name','earliest_decade','genre']).join(disruptive.get(['ni','nj','nk','disruption','confidence'])).dropna()
     return disruption_genero
+
+def gera_grafico(grafo,df,numero_disrupcao,cor_principais,cor_secundarios,tamanho_texto,largura,altura):
+    nos = grafo.nodes()
+    grau = nx.degree(grafo)
+    #pega os nos e os graus
+
+    cor_nos = [cor_principais if (no in df.index) and (df.loc[no].get('disruption') > numero_disrupcao)
+                else cor_secundarios for no in nos]
+    #cria uma lista dde cores para cada nó
+
+    nomes_nos = {no: df.loc[no].get('name')
+                if (no in df.index)  and (df.loc[no].get('disruption') > numero_disrupcao)
+                else '' for no in nos}
+    #cria um dicionario para cada nó
+
+    ax = plt.subplots(figsize=(largura, altura))
+
+    return nx.draw_networkx(
+        grafo,
+        pos=nx.spring_layout(grafo, k=0.15),
+        with_labels=True,
+        node_size=[v * 100 for _, v in grau],#tamanho do nó de acordo com seu grau
+        node_color=cor_nos,
+        edge_color='lightgray',
+        labels=nomes_nos,
+        font_weight=tamanho_texto,
+    )
 
