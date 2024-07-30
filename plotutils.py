@@ -30,6 +30,17 @@ def gera_grafico(grafo,df,numero_disrupcao=0,cor_principais='green',cor_secundar
         font_weight=tamanho_texto,
     )
 
+def listas_dispersao(lista1,lista2,largura=10,altura=8,title='Relação das Medidas',xlabel='Valor',ylabel='Disrupção'):
+    plt.subplots(figsize=(10, 8))
+    plt.title(title)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.scatter(lista1, lista2, c='green')
+    plt.show()
+
+
+    
+
 def lista_histograma(lista,largura=10,altura=8,title='Porcentagem de alteração do menor caminho',xlabel='Alteração Positiva',ylabel='Frequência Absoluta'):
     plt.subplots(figsize=(10, 8))
     plt.title(title)
