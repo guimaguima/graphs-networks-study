@@ -1,7 +1,7 @@
 from graphutils import *  # noqa: F403
 import numpy as np
 
-def seleciona_no_aleatorio(df, no_escolhido, ano, grafo,samples ,tipo='ini'):
+def seleciona_nos(df, no_escolhido, ano, grafo ,tipo='ini'):
 
     if df.empty or (not grafo.has_node(no_escolhido)):
         return None
@@ -13,9 +13,7 @@ def seleciona_no_aleatorio(df, no_escolhido, ano, grafo,samples ,tipo='ini'):
         df_filtrado = df[df['earliest_decade'] >= ano]
 
     
-    size = min(samples,len(df_filtrado.index))
-
-    nos_anteriores = np.random.choice(df_filtrado.index, size=size, replace=False)
+    nos_anteriores = list(df_filtrado.index)
     
     nos = [ 
             no 
@@ -28,30 +26,69 @@ def seleciona_no_aleatorio(df, no_escolhido, ano, grafo,samples ,tipo='ini'):
 
     return nos
 
+def calculo_media(total):
+    somatorio = 0
+    divisor = 1
 
-def calcula_short_path_comparision(no_inicial,no_final,no,grafo):
-    results = []
+    for i in total:
+        somatorio += len(i)
 
-    for ni in no_inicial:
-        for nj in no_final:
-            grafo_retirar = grafo.copy()
+    if len(total) > 0: 
+        divisor = len(total)
 
-            if nx.has_path(grafo_retirar, nj, ni):
+    media = somatorio/divisor
 
-                referencia = len(nx.shortest_path(grafo_retirar,source=nj,target=ni))
+    return media
 
-                grafo_retirar.remove_node(no)
+def subgrafo_randomico_media(no_inicial_lista,no_final_lista,no_desejado,repeticoes=10000):
 
-                alterado = len(nx.shortest_path(grafo_retirar,source=nj,target=ni))  if nx.has_path(grafo_retirar, nj, ni) else 0
-            
-                calculo_resultado = abs(referencia - alterado) 
-                results.append(calculo_resultado)
-        
-    return results
+    data_desejada = get_data_gz('artists.json')
+
+    medias = []
+    for _ in range(repeticoes):
+        total_base = []
+        total_alterado = []
+
+        if not( no_inicial_lista == [] ) and not (no_final_lista == []): 
+            no_inicial = np.random.choice(no_inicial_lista,replace=False)
+            no_final = np.random.choice(no_final_lista,replace=False)
+
+            nos_aleatorios = [no_inicial,no_final,no_desejado]
+            grafo_aleatorio = get_grafo(data_desejada,nos_aleatorios)
+
+            valor_base = (
+                    nx.all_shortest_paths(grafo_aleatorio,no_final,no_inicial) 
+                    if nx.has_path(grafo_aleatorio,no_final,no_inicial) 
+                    else []
+                    )
+
+            total_base += valor_base
+
+            grafo_aleatorio.remove_node(no_desejado)
+
+            valor_alterado = (
+                    nx.all_shortest_paths(grafo_aleatorio,no_final,no_inicial) 
+                    if nx.has_path(grafo_aleatorio,no_final,no_inicial) 
+                    else []
+                    )
+
+            total_alterado += valor_alterado
+
+            media_base = calculo_media(total_base)
+            media_alterado = calculo_media(total_alterado)
+
+            if not (media_base == 0):
+                medias.append(abs(media_base - media_alterado))
+
+
+    return medias
 
 
 
-def grafo_simulation_short_path(genero='Jazz',disrupcao=0,samples=50):
+
+
+
+def grafo_simulation_short_path(genero='Jazz',disrupcao=0.2):
     df = get_artistas_df()
     data_desejada = get_data_gz('artists.json')
     grafo  = get_grafo_parametros(data_desejada,df,'genre',genero)
@@ -63,17 +100,14 @@ def grafo_simulation_short_path(genero='Jazz',disrupcao=0,samples=50):
     else:
         nos_disruptivos =  df[(df.get('genre')==genero) & (df.get('disruption')<disrupcao) &  (df.get('disruption')>disrupcao-.1)].index
 
-    short_paths = []
+    short_paths_mean = np.array([])
     for no in nos_disruptivos:
         decada_inicial =   df.loc[no].get('earliest_decade')
+        
+        no_inicial_lista = seleciona_nos(df,no,decada_inicial,grafo)
 
-        no_inicial = seleciona_no_aleatorio(df,no,decada_inicial,grafo,samples)
+        no_final_lista = seleciona_nos(df,no,decada_inicial,grafo, tipo='fim')
 
-        no_final = seleciona_no_aleatorio(df,no,decada_inicial,grafo,samples, tipo='fim')
+        short_paths_mean = np.append(short_paths_mean,subgrafo_randomico_media(no_inicial_lista,no_final_lista,no))
 
-        atual_diferenca = calcula_short_path_comparision(no_inicial,no_final,no,grafo)
-
-        short_paths += atual_diferenca
-
-
-    return short_paths
+    return short_paths_mean

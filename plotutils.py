@@ -41,10 +41,10 @@ def listas_dispersao(lista1,lista2,largura=10,altura=8,title='Relação das Medi
 
     
 
-def lista_histograma(lista,largura=10,altura=8,title='Porcentagem de alteração do menor caminho',xlabel='Alteração Positiva',ylabel='Frequência Absoluta'):
+def lista_histograma(lista,largura=10,altura=8,title='Porcentagem de alteração do menor caminho',xlabel='Alteração Positiva',ylabel='Frequência Absoluta',bins=6):
     plt.subplots(figsize=(10, 8))
     plt.title(title)
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
-    plt.hist(lista, rwidth=0.9)
+    plt.hist(lista, bins=bins, rwidth=0.9)
     plt.show()
