@@ -15,5 +15,5 @@ def centralidade(metodo=nx.degree_centrality,genero='Jazz',arquivo='artists.json
     index_sorteados = np.argsort(values)
     result = {keys[i]: values[i] for i in index_sorteados}
 
-    return result
+    return result # resultado
 
