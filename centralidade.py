@@ -1,9 +1,9 @@
 from graphutils import *  # noqa: F403
 import numpy as np
 
-def centralidade(metodo=nx.degree_centrality,genero='Jazz'):
+def centralidade(metodo=nx.degree_centrality,genero='Jazz',arquivo='artists.json'):
     df = get_artistas_df()
-    data_desejada = get_data_gz('artists.json')
+    data_desejada = get_data_gz(arquivo)
     grafo  = get_grafo_parametros(data_desejada,df,'genre',genero)
 
     df = df[(df.get('genre') == genero)]
