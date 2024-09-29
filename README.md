@@ -2,9 +2,11 @@
 
 ---
 
-Estudos e códigos usados pelos alunos de Ciência de Dados de 2024.1 da UFMG (Gabriel Guimarães, Mateus e Raiza) para o aprendizado de grafos e redes de grafos, em especial, redes sociais.
+Repositório de códigos do grupo de estudo "Ciência de Dados aplicada a Música" usando a biblioteca networkx. 
 
-## Os códigos são aprendidos e reutilizados da pesquisa e repositório all-music-disruption do Professor Flávio.
+Neste respositório, entretanto, é estudado grafos sobre uma perspectiva mais abrangente, sem somente tangenciar os temas de música, pensando em ciência de dados com grafos. 
+
+## Os códigos são aprendidos e reutilizados da pesquisa e repositório all-music-disruption do Professor Flávio, DCC - UFMG.
 
 # Bibliotecas
 

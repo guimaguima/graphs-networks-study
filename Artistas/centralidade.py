@@ -1,4 +1,4 @@
-from graphutils import *  # noqa: F403
+from grafoutils import *  # noqa: F403
 import numpy as np
 
 def centralidade(metodo=nx.degree_centrality,genero='Jazz',arquivo='artists.json'):

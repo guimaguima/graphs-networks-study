@@ -1,4 +1,4 @@
-from graphutils import *  # noqa: F403
+from grafoutils import *  # noqa: F403
 import matplotlib.pyplot as plt
 
 def gera_grafico(grafo,df,numero_disrupcao=0,cor_principais='green',cor_secundarios='gray',tamanho_texto=10,largura=10,altura=10):

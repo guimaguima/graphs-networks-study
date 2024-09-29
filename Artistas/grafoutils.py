@@ -10,14 +10,14 @@ def extract_id(txt):
 
 def get_data_gz(arquivo_nome):
     #pega o gz definido
-    caminho_arquivo = './data/'+arquivo_nome+'.gz'
+    caminho_arquivo = '../data/'+arquivo_nome+'.gz'
     with gzip.open(caminho_arquivo) as arquivo:
         json_data = json.load(arquivo) 
         return json_data
 
 def get_df(arquivo_nome,arquivo_ext):
     #pega um dataframe qualquer de um arquivo qualquer
-    caminho_arquivo = './data/'+arquivo_nome+'.'+arquivo_ext
+    caminho_arquivo = '../data/'+arquivo_nome+'.'+arquivo_ext
 
     if arquivo_ext.find('json') > 0:
         df = pd.read_json(caminho_arquivo)
