@@ -86,3 +86,63 @@ def gera_grafico(grafo,df,cor_principais='green',cor_secundarios='gray',tamanho_
         labels= nomes_nos,
         font_weight=tamanho_texto,
     )
+    
+    
+def computar_disrupcao(grafo, min_in=1, min_out=0): #código do allmusic disruption adaptado
+
+    #dicionario de indice por nó
+    id_no = {i: n for i, n in enumerate(grafo.nodes)}
+    
+    
+    in_count = dict(grafo.in_degree(grafo.nodes))
+    out_count = dict(grafo.out_degree(grafo.nodes))
+
+    F = nx.to_scipy_sparse_array(grafo, format='csr')
+    #sparce matrix para saidas para representar conexões
+    T = nx.to_scipy_sparse_array(grafo, format='csc')
+    #sparce matrix para entradas
+    D = np.zeros(shape=(F.shape[0], 6))
+
+    for no in range(F.shape[0]):
+        #requsitos mínimos
+        if in_count[id_no[no]] >= min_in and \
+                out_count[id_no[no]] >= min_out:
+            ni = 0
+            nj = 0
+            nk = 0
+
+            outgoing = F[:, [no]].nonzero()[1]#saindo do nó
+            incoming = T[:, [no]].nonzero()[0]#entrando no nó
+            outgoing_set = set(outgoing)
+
+            for outro_no in incoming:
+                segundo_nivel = F[:, [outro_no]].nonzero()[1]
+                if len(outgoing_set.intersection(segundo_nivel)) == 0:
+                    ni += 1
+                else:
+                    nj += 1
+
+            #quem citou minhas influências
+            
+            influencias_correlatas = set()
+            for out in outgoing:
+                influencias_correlatas.update(T[:, [out]].nonzero()[0])
+            influencias_correlatas = np.unique(list(influencias_correlatas))
+            
+            
+            for outro_no in influencias_correlatas:
+                # ele me mencionam? não? então adiciona nk
+                if F[outro_no, no] == 0 and outro_no != no:
+                    nk += 1
+
+            #preenche a matriz D com os valores calculados
+            D[no, :] = [ni, nj, nk, (ni - nj) / (ni + nj + nk), 
+                        in_count[id_no[no]], out_count[id_no[no]]]
+            
+        else:
+            #caso o nó não atenda aos requisitos mínimos, preenche com NaN
+            D[no, :] = [np.nan, np.nan, np.nan, np.nan, 
+                        in_count[id_no[no]], out_count[id_no[no]]]
+
+    return pd.DataFrame(D, index=grafo.nodes,
+                        columns=['ni', 'nj', 'nk', 'disruption', 'in', 'out'])
