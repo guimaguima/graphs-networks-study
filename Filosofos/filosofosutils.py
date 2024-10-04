@@ -1,5 +1,5 @@
 import json
-import gzip
+import csv
 import networkx as nx
 import numpy as np
 import pandas as pd
@@ -28,7 +28,7 @@ def get_pandas_csv():
             pandas = pandas._append(nova_linha, ignore_index = True)
 
     pandas = pandas.sort_values('id').set_index('id')
-    pandas.to_csv('../data/phi.csv',index=False)
+    pandas.to_csv('../data/phi.csv',index=True)
 
     return pandas
 
