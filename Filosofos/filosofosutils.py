@@ -6,7 +6,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 def get_pandas_csv():
-    caminho_arquivos='../data/phi_p_i_ids.json'
+    caminho_arquivos='../data/phi_unique_ids.json'
     
     with open(caminho_arquivos, 'r', encoding='utf-8') as file:
         data = json.load(file)
@@ -35,7 +35,7 @@ def get_pandas_csv():
 
 def get_grafo(nos_desejados=[], restritivo=False, parametro='influencia'):
     
-    caminho_arquivos='../data/phi_p_i_ids.json'
+    caminho_arquivos='../data/phi_unique_ids.json'
     
     with open(caminho_arquivos, 'r', encoding='utf-8') as file:
         data = json.load(file)
@@ -44,11 +44,11 @@ def get_grafo(nos_desejados=[], restritivo=False, parametro='influencia'):
 
     for phi in data['results']['bindings']:
         if len(nos_desejados)==0 : 
-            grafo_direcidonado.add_edge(phi['p']['id'],phi['influenced']['id'])
+            grafo_direcidonado.add_edge(phi['influenced']['id'],phi['p']['id'])
         elif restritivo and phi['influenced']['id'] not in nos_desejados:
             continue
         elif phi['p']['id'] in nos_desejados:
-            grafo_direcidonado.add_edge(phi['p']['id'],phi['influenced']['id']) 
+            grafo_direcidonado.add_edge(phi['influenced']['id'],phi['p']['id']) 
 
     return grafo_direcidonado
 
