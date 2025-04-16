@@ -6,7 +6,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 def get_pandas_csv():
-    caminho_arquivos='../data/phi_unique_ids.json'
+    caminho_arquivos='../data/Filosofos/phi.json'
     
     with open(caminho_arquivos, 'r', encoding='utf-8') as file:
         data = json.load(file)
@@ -28,14 +28,14 @@ def get_pandas_csv():
             pandas = pandas._append(nova_linha, ignore_index = True)
 
     pandas = pandas.sort_values('id').set_index('id')
-    pandas.to_csv('../data/phi.csv',index=True)
+    pandas.to_csv('../data/Filosofos/phi.csv',index=True)
 
     return pandas
 
 
 def get_grafo(nos_desejados=[], restritivo=False, parametro='influencia'):
     
-    caminho_arquivos='../data/phi_unique_ids.json'
+    caminho_arquivos='../data/Filosofos/phi.json'
     
     with open(caminho_arquivos, 'r', encoding='utf-8') as file:
         data = json.load(file)
